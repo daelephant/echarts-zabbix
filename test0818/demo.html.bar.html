@@ -1,0 +1,151 @@
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 600px;height:400px;"></div>
+    <script type="text/javascript">
+     //测试数据：
+              var pie1=[];
+              var piename=[];
+              function pie1Test(){
+                  pie1 = Array();
+                  piename = Array();
+                $.ajax({
+                  type:"post",
+                  async:false,
+                  url:"./controller/pie.php",
+                  data:{},
+                  dataType:"json",
+                  success:function(result){
+                    if (result) {
+
+                      for (var i = 0; i < result['pie'].length; i++) {
+                          pie1.push(result['pie'][i]);
+                          piename.push(result['pie'][i]['name']);
+                      }
+                    }
+                  },
+                  catch:false
+                });
+                return pie1,piename;
+              }
+            //   console.log(pie1);
+              pie1Test();
+              //测试数据
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        var app = {};
+        // 指定图表的配置项和数据
+        var option = {
+            series: [{
+//                roseType: 'angle',//南丁格尔图
+                data: pie1
+
+            }]
+        };
+
+        app.currentIndex = -1;
+
+        setInterval(function () {
+            var dataLen = option.series[0].data.length;
+            // 取消之前高亮的图形
+            myChart.dispatchAction({
+                type: 'downplay',
+                seriesIndex: 0,
+                dataIndex: app.currentIndex
+            });
+            app.currentIndex = (app.currentIndex + 1) % dataLen;
+            // 高亮当前图形
+            myChart.dispatchAction({
+                type: 'highlight',
+                seriesIndex: 0,
+                dataIndex: app.currentIndex
+            });
+            // 显示 tooltip
+            myChart.dispatchAction({
+                type: 'showTip',
+                seriesIndex: 0,
+                dataIndex: app.currentIndex
+            });
+        }, 2100);
+     setInterval(function () {
+         pie1Test();
+         myChart.setOption({
+//             backgroundColor: '#2c343c',
+             title: {
+                 text: '入侵检测量占比',
+                 x: 'center'
+             },
+             tooltip: {
+                 headerFormat: '{series.name}<br>',
+                 pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+             },
+             legend: {
+                 orient:'vertical',
+                 left:'left',
+                 data: piename
+             },
+             //阴影的配置
+             itemStyle: {
+                 normal: {
+                     // 设置扇形的颜色
+                     // color: '#c23531',
+                     // shadowBlur: 200,
+                     // shadowColor: 'rgba(0, 0, 0, 0.5)',
+                     // 阴影的大小
+                     shadowBlur: 200,
+                     // 阴影水平方向上的偏移
+                     shadowOffsetX: 0,
+                     // 阴影垂直方向上的偏移
+                     shadowOffsetY: 0,
+                     // 阴影颜色
+                     shadowColor: 'rgba(0, 0, 0, 0.5)'
+                 },
+                 emphasis: {
+                     shadowBlur: 200,
+                     shadowColor: 'rgba(0, 0, 0, 0.5)'
+                 }
+             },
+             plotOptions: {
+                 pie: {
+                     allowPointSelect: true,
+                     cursor: 'pointer',
+                     dataLabels: {
+                         enabled: true,
+                         //通过format或formatter来格式化数据标签显示
+                         //format:'值：{point.y}占比{point.percentage} %'
+                         formatter:function(){
+                             return '<span style="color:"' + this.point.color +'">值：'+ this.y+',占比' + parseInt(this.percentage)+'%</span>';
+
+                         }
+                     },
+                     showInLegend: true
+                 }
+             },
+             series: [{
+                 name: '入侵检测',
+                 type: 'pie',
+                 label: {
+                     normal: {
+                         textStyle: {
+                             color: 'rgba(255, 255, 255, 0.3)'
+                         }
+                     }
+                 },
+                 labelLine: {
+                     normal: {
+                         lineStyle: {
+                             color: 'rgba(255, 255, 255, 0.3)'
+                         }
+                     }
+                 },
+                 //roseType: 'angle',//南丁格尔图
+                 data: pie1
+
+             }]
+         });
+     }, 500);
+
+//        if (option && typeof option === "object") {
+//            myChart.setOption(option, true);
+//        }
+        // 使用刚指定的配置项和数据显示图表。
+        // myChart.setOption(option);
+    </script>

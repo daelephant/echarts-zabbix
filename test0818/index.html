@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="assets/css/echartsHome.css" rel="stylesheet">
+    <script src="assets/js/esl.js"></script>
+    <script src="assets/js/codemirror.js"></script>
+    <script src="assets/js/jquery-1.8.2.min.js"></script>
+    <script src="assets/js/echarts-map.js"></script>
+</head>
+<body>
+<div id="maincharts" class="main" style="width:850px;"></div>
+<div id="chartArea2" class="main" style="width:850px;"></div>
+<script type="text/javascript">
+    function needMap() {
+        var href = location.href;
+        return href.indexOf('map') != -1
+            || href.indexOf('mix3') != -1
+            || href.indexOf('mix5') != -1
+            || href.indexOf('dataRange') != -1;
+
+    }
+
+    var fileLocation = needMap() ? 'assets/js/echarts-map' : 'assets/js/echarts';
+    require.config({
+        paths: {
+            echarts: fileLocation,
+            'echarts/assets/js/pie': fileLocation,
+            'echarts/assets/js/map': fileLocation,
+        }
+    });
+
+    require(
+        [
+            'echarts',
+            'echarts/chart/pie',
+            needMap() ? 'echarts/chart/map' : 'echarts'
+        ],
+
+        DrawCharts
+    );
+    function DrawCharts(ec) {
+
+        DrawMapPieCharts(ec);
+        DrawBarCharts(ec);
+    }
+    function DrawMapPieCharts(ec) {
+        //--- 柱状图 ---
+        var myChart = ec.init(document.getElementById('maincharts'));
+
+        myChart.showLoading({
+            text: "正在加载中...请稍后"
+        });
+        myChart.hideLoading();
+        myChart.setOption({
+            title: {
+                text: '2014全国每月销售量（单）',
+                subtext: '数据来自WMS统计'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                x: 'right',
+                selectedMode: false,
+                data: ['山东', '上海', '广东', '江苏']
+            },
+            dataRange: {
+                orient: 'horizontal',
+                min: 0,
+                max: 55000,
+                text: ['购买力强', '低'],           // 文本，默认为数值文本
+                splitNumber: 0
+            },
+            toolbox: {
+                show: true,
+                orient: 'vertical',
+                x: 'right',
+                y: 'center',
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false }
+                }
+            },
+            series: [
+                {
+                    name: '2014全国每月订单销售量',
+                    type: 'map',
+                    mapType: 'china',
+                    mapLocation: {
+                        x: 'left'
+                    },
+                    selectedMode: 'multiple',
+                    itemStyle: {
+                        normal: { label: { show: true } },
+                        emphasis: { label: { show: true } }
+                    },
+                    data: [
+                        { name: '西藏', value: 605.83 },
+                        { name: '青海', value: 1670.44 },
+                        { name: '宁夏', value: 2102.21 },
+                        { name: '海南', value: 2522.66 },
+                        { name: '甘肃', value: 5020.37 },
+                        { name: '贵州', value: 5701.84 },
+                        { name: '新疆', value: 6610.05 },
+                        { name: '云南', value: 8893.12 },
+                        { name: '重庆', value: 10011.37 },
+                        { name: '吉林', value: 10568.83 },
+                        { name: '山西', value: 11237.55 },
+                        { name: '天津', value: 11307.28 },
+                        { name: '江西', value: 11702.82 },
+                        { name: '广西', value: 11720.87 },
+                        { name: '陕西', value: 12512.3 },
+                        { name: '黑龙江', value: 12582 },
+                        { name: '内蒙古', value: 14359.88 },
+                        { name: '安徽', value: 15300.65 },
+                        { name: '北京', value: 16251.93 },
+                        { name: '福建', value: 17560.18 },
+                        { name: '上海', value: 19195.69 },
+                        { name: '湖北', value: 19632.26 },
+                        { name: '湖南', value: 19669.56 },
+                        { name: '四川', value: 21026.68 },
+                        { name: '辽宁', value: 22226.7 },
+                        { name: '河北', value: 24515.76 },
+                        { name: '河南', value: 26931.03 },
+                        { name: '浙江', value: 32318.85 },
+                        { name: '山东', value: 45361.85 },
+                        { name: '江苏', value: 49110.27 },
+                        { name: '广东', value: 53210.28 }
+                    ]
+                }
+                ,
+                {
+                    name: '2014全国每月订单销售量',
+                    type: 'pie',
+                    roseType: 'area',
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    center: [document.getElementById('maincharts').offsetWidth - 250, 225],
+                    radius: [30, 120],
+                    data: [
+                        { name: '山东', value: 26251.93 },
+                        { name: '上海', value: 19195.69 },
+                        { name: '广东', value: 33210.28 },{ name: '江苏', value: 23210.28 }
+                    ]
+                }
+            ],
+            animation: false
+
+        });
+    }
+
+    function DrawBarCharts(ec) {
+        //--- 柱状图 ---
+        var myChart = ec.init(document.getElementById('chartArea2'));
+        myChart.showLoading({
+            text: "正在加载中...请稍后"
+        });
+        myChart.hideLoading();
+        myChart.setOption({
+
+            tooltip: {
+                trigger: 'axis'
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false },
+                    magicType: { show: true, type: ['line', 'bar', 'stack', 'tiled'] },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+
+            xAxis: {
+                data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '坐标轴触发1',
+                    type: 'bar',
+                    data: [320, 332, 301, 334, 390, 330, 320]
+                },
+                {
+                    name: '坐标轴触发2',
+                    type: 'bar',
+                    data: [862, 1018, 964, 1026, 1679, 1600, 157]
+                },
+                {
+                    name: '鼠标移动触发显示1',
+                    type: 'bar',
+                    tooltip: {             // Series config.
+                        trigger: 'item',
+                        backgroundColor: 'black',
+                        position: [0, 0],
+                        formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
+                    },
+                    stack: '数据源',
+                    data: [
+                        120, 132,
+                        {
+                            value: 301,
+                            itemStyle: { normal: { color: 'red' } },
+                            tooltip: {     // Data config.
+                                backgroundColor: 'blue',
+                                formatter: "Data formatter: <br/>{a}<br/>{b}:{c}"
+                            }
+                        },
+                        134, 90,
+                        {
+                            value: 230,
+                            tooltip: { show: false }
+                        },
+                        210
+                    ]
+                },
+                {
+                    name: '鼠标移动显示2',
+                    type: 'bar',
+                    tooltip: {
+                        show: false,
+                        trigger: 'item'
+                    },
+                    stack: '数据源',
+                    data: [150, 232, 201, 154, 190, 330, 410]
+                }
+            ]
+        });
+    }
+
+</script>
+</body>
+</html>
