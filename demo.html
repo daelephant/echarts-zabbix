@@ -39,6 +39,8 @@
               function pie1Test(){
                   pie1 = Array();
                   piename = Array();
+                  //async: false,（默认是true）;false为同步，这个 testAsync()方法中的Ajax请求将整个浏览器锁死，只有tet.php执行结束后，才可以执行其它操作。
+                  /*当async: true 时，ajax请求是异步的。但是其中有个问题：testAsync()中的ajax请求和其后面的操作是异步执行的，那么当tet.php还未执行完，就可能已经执行了 ajax请求后面的操作*/
                 $.ajax({
                   type:"post",
                   async:false,

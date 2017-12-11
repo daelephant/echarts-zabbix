@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="container" style="height: 100%"></div>
+<!-- 引入 echarts.js -->
+<script src="js\echarts.js"></script>
+<script src="js\dark.js"></script>
+<script src="js\jquery.js"></script>
+<script type="text/javascript">
+    //1、初始化echarts实例
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom,'dark');
+    //2、Prepara data
+    var app = {};
+    option = null;
+    app.title = '环形图';
+
+    arrRing = Array();
+    ringName = Array();
+    function ringPull() {
+        $.ajax({
+            type:"post",
+            async:false,
+            url:"./controller/ring.php",
+            data:{},
+            dataType:"json",
+            success:function(result){
+                if (result) {
+
+                    for (var i = 0; i < result.length; i++) {
+                        arrRing.push(result[i]);
+                        ringName.push(result[i]['name']);
+                    }
+                    console.log(ringName);
+                    console.log(arrRing);
+                }
+            },
+            catch:false
+
+        });
+    }
+
+    ringPull();
+
+    var app = {};
+    option = null;
+    option = {
+        title : {
+            text: '饼图程序调用高亮示例',
+            x: 'center'
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: "{a} <br/>{b}: {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            data:ringName
+        },
+        series: [
+            {
+                name:'访问来源',
+                type:'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                data:arrRing
+
+            }
+        ]
+    };
+    app.currentIndex = -1;
+    setInterval(function () {
+        var dataLen = option.series[0].data.length;
+        // 取消之前高亮的图形
+        myChart.dispatchAction({
+            type: 'downplay',
+            seriesIndex: 0,
+            dataIndex: app.currentIndex
+        });
+        app.currentIndex = (app.currentIndex + 1) % dataLen;
+        // 高亮当前图形
+        myChart.dispatchAction({
+            type: 'highlight',
+            seriesIndex: 0,
+            dataIndex: app.currentIndex
+        });
+        // 显示 tooltip
+        myChart.dispatchAction({
+            type: 'showTip',
+            seriesIndex: 0,
+            dataIndex: app.currentIndex
+        });
+        // ringPull();
+    }, 1000);
+    ;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+</script>
+</body>
+</html>
