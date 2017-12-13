@@ -18,32 +18,66 @@
     option = null;
     app.title = '环形图';
 
-    arrRing = Array();
-    ringName = Array();
-    function ringPull() {
-        $.ajax({
-            type:"post",
-            async:false,
-            url:"./controller/ring.php",
-            data:{},
-            dataType:"json",
-            success:function(result){
-                if (result) {
 
-                    for (var i = 0; i < result.length; i++) {
-                        arrRing.push(result[i]);
-                        ringName.push(result[i]['name']);
+    setInterval(
+            $.ajax({
+                type:"post",
+                async:false,
+                url:"./controller/ring.php",
+                data:{},
+                dataType:"json",
+                success:function(result){
+                    arrRing = Array();
+                    ringName = Array();
+                    if (result) {
+                        for (var i = 0; i < result.length; i++) {
+                            arrRing.push(result[i]);
+                            ringName.push(result[i]['name']);
+                        }
+                        //console.log(ringName);
+                        // console.log(arrRing);
+
                     }
-                    console.log(ringName);
-                    console.log(arrRing);
-                }
-            },
-            catch:false
+                },
+                catch:false
+        }
+    ),2000);
+    console.log(ringName);
+    console.log(arrRing);
+    // function ringPull() {
+    //     arrRing = Array();
+    //     ringName = Array();
+    //     $.ajax({
+    //         type:"post",
+    //         async:false,
+    //         url:"./controller/ring.php",
+    //         data:{},
+    //         dataType:"json",
+    //         success:function(result){
+    //             if (result) {
+    //
+    //                 for (var i = 0; i < result.length; i++) {
+    //                     arrRing.push(result[i]);
+    //                     ringName.push(result[i]['name']);
+    //                 }
+    //                 console.log(ringName);
+    //                 console.log(arrRing);
+    //             }
+    //         },
+    //         catch:false
+    //
+    //     });
+    // }
+    // ringPull();
+    //  arrRing = Array();
+    //  ringName = Array();
+    // setInterval((function(){
+    //     ringPull();
+    //     arrRing = Array();
+    //     ringName = Array();
+    // }),1000);
 
-        });
-    }
 
-    ringPull();
 
     var app = {};
     option = null;
@@ -92,6 +126,7 @@
     };
     app.currentIndex = -1;
     setInterval(function () {
+
         var dataLen = option.series[0].data.length;
         // 取消之前高亮的图形
         myChart.dispatchAction({
@@ -112,11 +147,15 @@
             seriesIndex: 0,
             dataIndex: app.currentIndex
         });
-        // ringPull();
+        arrRing = Array();
+        ringName = Array();
+
     }, 1000);
     ;
     if (option && typeof option === "object") {
-        myChart.setOption(option, true);
+        setInterval(
+        myChart.setOption(option, true),1000
+    )
     }
 </script>
 </body>
