@@ -14,9 +14,8 @@
     // }
     // setInterval(getla,1000);//可以触发
     var dom = document.getElementById("container");
-    var myChart = echarts.init(dom);
-    // var app = {};
-    option = null;
+    var myChart = echarts.init(dom,'dark');
+    // var app = {};option = null;
 
              //cb=Array();
              function getdata() {
@@ -42,7 +41,7 @@
              }
         setInterval(function () {
             getdata();
-
+            console.log(cb);
             myChart.setOption({
                 title: {
                     text: '异步数据加载示例'
