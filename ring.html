@@ -19,8 +19,11 @@
     app.title = '环形图';
 
 
-    setInterval(
-            $.ajax({
+    arrRing = Array();
+    arrRingout = Array();
+    ringName = Array();
+    function getring(){
+       $.ajax({
                 type:"post",
                 async:false,
                 url:"./controller/ring.php",
@@ -34,96 +37,22 @@
                             arrRing.push(result[i]);
                             ringName.push(result[i]['name']);
                         }
-                        //console.log(ringName);
-                        // console.log(arrRing);
-
                     }
                 },
                 catch:false
         }
-    ),2000);
-    console.log(ringName);
-    console.log(arrRing);
-    // function ringPull() {
-    //     arrRing = Array();
-    //     ringName = Array();
-    //     $.ajax({
-    //         type:"post",
-    //         async:false,
-    //         url:"./controller/ring.php",
-    //         data:{},
-    //         dataType:"json",
-    //         success:function(result){
-    //             if (result) {
-    //
-    //                 for (var i = 0; i < result.length; i++) {
-    //                     arrRing.push(result[i]);
-    //                     ringName.push(result[i]['name']);
-    //                 }
-    //                 console.log(ringName);
-    //                 console.log(arrRing);
-    //             }
-    //         },
-    //         catch:false
-    //
-    //     });
-    // }
-    // ringPull();
-    //  arrRing = Array();
-    //  ringName = Array();
-    // setInterval((function(){
-    //     ringPull();
-    //     arrRing = Array();
-    //     ringName = Array();
-    // }),1000);
-
-
-
+    );
+    }
+    getring();
     var app = {};
-    option = null;
-    option = {
-        title : {
-            text: '饼图程序调用高亮示例',
-            x: 'center'
-        },
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'left',
-            data:ringName
-        },
-        series: [
-            {
-                name:'访问来源',
-                type:'pie',
-                radius: ['50%', '70%'],
-                avoidLabelOverlap: false,
-                label: {
-                    normal: {
-                        show: false,
-                        position: 'center'
-                    },
-                    emphasis: {
-                        show: true,
-                        textStyle: {
-                            fontSize: '30',
-                            fontWeight: 'bold'
-                        }
-                    }
-                },
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                data:arrRing
+     option = null;
+    // 指定图表的配置项和数据
+    // var option = {
+    //     series: [{
+    //         data: arrRing
+    //     }]
+    // };
 
-            }
-        ]
-    };
     app.currentIndex = -1;
     setInterval(function () {
 
@@ -150,12 +79,59 @@
         arrRing = Array();
         ringName = Array();
 
-    }, 1000);
-    ;
+    }, 5000);
+
+    setInterval(function () {
+        getring();
+        //console.log(arrRing);
+        myChart.setOption({
+            title : {
+                text: '饼图程序调用高亮示例',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)"
+            },
+            legend: {
+                orient: 'vertical',
+                x: 'left',
+                data:ringName
+            },
+            series: [
+                {
+                    name:'访问来源',
+                    type:'pie',
+                    radius: ['50%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        normal: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            show: true,
+                            textStyle: {
+                                fontSize: '30',
+                                fontWeight: 'bold'
+                            }
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: false
+                        }
+                    },
+                    data:arrRing
+
+                }
+            ]
+        });
+    },2000);
+
     if (option && typeof option === "object") {
-        setInterval(
-        myChart.setOption(option, true),1000
-    )
+
+        myChart.setOption(option, true);
     }
 </script>
 </body>

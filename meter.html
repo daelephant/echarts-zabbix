@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="container" style="height: 100%"></div>
+<script src="js\echarts.js"></script>
+<script src="js\dark.js"></script>
+<script src="js\jquery.js"></script>
+<script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom,'dark');
+    //
+    option = {
+        tooltip: {
+            formatter: "{a} <br/>{b} : {c}"
+        },
+        toolbox: {
+            feature: {
+                restore: {},
+                saveAsImage: {}
+            }
+        },
+        series: [{
+            name: '仪表盘展示',
+            type: 'gauge',
+            max: 90,
+            detail: {
+                formatter: '{value}'
+            },
+            data: [{
+                value: 50,
+                name: '高危指数'
+            }]
+        }]
+    };
+    function getMeter() {
+       var cb=0;
+        $.ajax({
+            type:"post",
+            url:"./controller/meter.php",
+            data:{},
+            async: false,
+            dataType:"json",
+            success:function(result){
+                if (result) {
+                    cb = result;
+                }
+            },
+            cache:false
+        });
+        return cb;
+
+    }
+    getMeter();
+    setInterval(function () {
+            cb = getMeter();
+            console.log(cb);
+            option.series[0].data[0].value =cb;
+            myChart.setOption(option, true);
+            window.addEventListener("resize",function(){
+                myChart.resize();
+            });
+    }, 2000);
+</script>
+</body>
+</html>

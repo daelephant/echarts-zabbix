@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="ring" style="height: 100%"></div>
+<!-- 引入 echarts.js -->
+<script src="js\echarts.js"></script>
+<script src="js\dark.js"></script>
+<script src="js\jquery.js"></script>
+<script type="text/javascript">
+    //第一步；
+    // 基于准备好的dom，初始化echarts实例
+    var myRing = echarts.init(document.getElementById('ring'),'dark');
+    //第二步；
+    //准备数据：
+    var appRing = {};
+    optionRing = null;
+    appRing.title = '环形图';
+    function pieRingTest(){
+        pieRing = Array();
+        pieRingName = Array();
+        //async: false,（默认是true）;false为同步，这个 testAsync()方法中的Ajax请求将整个浏览器锁死，只有tet.php执行结束后，才可以执行其它操作。
+        /*当async: true 时，ajax请求是异步的。但是其中有个问题：testAsync()中的ajax请求和其后面的操作是异步执行的，那么当tet.php还未执行完，就可能已经执行了 ajax请求后面的操作*/
+        $.ajax({
+            type:"post",
+            async:false,
+            url:"./controller/ring.php",
+            data:{},
+            dataType:"json",
+            success:function(result){
+                if (result) {
+
+                    for (var i = 0; i < result.length; i++) {
+                        pieRing.push(result[i]);
+                        pieRingName.push(result[i]['name']);
+                    }
+                }
+            },
+            catch:false
+        });
+        return pieRing,pieRingName;
+    }
+    pieRingTest();
+    //console.log(pieRingName);
+    //测试数据
+    // optionRing = null;
+    // 指定图表的配置项和数据
+    var optionRing = {
+        series: [{
+            data: pieRing
+        }]
+    }
+;
+    appRing.currentIndex = -1;
+
+    setInterval(function () {
+        var dataLen = optionRing.series[0].data.length;
+        console.log(dataLen);
+        // 取消之前高亮的图形
+        myRing.dispatchAction({
+            type: 'downplay',
+            seriesIndex: 0,
+            dataIndex: appRing.currentIndex
+        });
+        appRing.currentIndex = (appRing.currentIndex + 1) % dataLen;
+        // 高亮当前图形
+        myRing.dispatchAction({
+            type: 'highlight',
+            seriesIndex: 0,
+            dataIndex: appRing.currentIndex
+        });
+        // 显示 tooltip
+        myRing.dispatchAction({
+            type: 'showTip',
+            seriesIndex: 0,
+            dataIndex: appRing.currentIndex
+        });
+    }, 2100);
+
+    setInterval(function () {
+        pieRingTest();
+        //第三步 使用刚指定的配置项和数据显示图表。
+        myChart.hideLoading();
+        myRing.setOption({
+//             backgroundColor: '#2c343c',
+            title: {
+                text: '环形展示检测量占比',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)"
+                // headerFormat: '{series.name}<br>',
+                //pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            legend: {
+                orient:'vertical',
+                left:'left',
+                data: pieRingName
+            },
+            series: [{
+                name: '入侵检测',
+                type: 'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    normal: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        show: true,
+                        textStyle: {
+                            fontSize: '30',
+                            fontWeight: 'bold'
+                        }
+                    }
+                },
+                labelLine: {
+                    normal: {
+                        show: false
+                    }
+                },
+                //roseType: 'angle',//南丁格尔图
+                data: pieRing
+
+            }]
+        });
+        window.addEventListener("resize",function(){
+            myRing.resize();
+        });
+    }, 5500);
+</script>
+</body>
+</html>
