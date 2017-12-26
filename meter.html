@@ -4,15 +4,15 @@
     <meta charset="utf-8">
 </head>
 <body style="height: 100%; margin: 0">
-<div id="container" style="height: 100%"></div>
+<div id="meter" style="height: 100%"></div>
 <script src="js\echarts.js"></script>
 <script src="js\dark.js"></script>
 <script src="js\jquery.js"></script>
 <script type="text/javascript">
-    var dom = document.getElementById("container");
-    var myChart = echarts.init(dom,'dark');
+    var domMeter = document.getElementById("meter");
+    var myMeter = echarts.init(domMeter,'dark');
     //
-    option = {
+    optionMeter = {
         tooltip: {
             formatter: "{a} <br/>{b} : {c}"
         },
@@ -57,10 +57,10 @@
     setInterval(function () {
             cb = getMeter();
             console.log(cb);
-            option.series[0].data[0].value =cb;
-            myChart.setOption(option, true);
+            optionMeter.series[0].data[0].value =cb;
+            myMeter.setOption(optionMeter, true);
             window.addEventListener("resize",function(){
-                myChart.resize();
+                myMeter.resize();
             });
     }, 2000);
 </script>

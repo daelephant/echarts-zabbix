@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="brokenLine" style="height: 100%"></div>
+<!-- 引入 echarts.js -->
+<script src="js\echarts.js"></script>
+<script src="js\dark.js"></script>
+<script src="js\jquery.js"></script>
+<script type="text/javascript">
+    //第一步；
+    // 基于准备好的dom，初始化echarts实例
+    var myBrokenLine = echarts.init(document.getElementById('brokenLine'),'dark');
+    //第二步；
+    //准备数据：
+    var appBrokenLine = {};
+    optionRing = null;
+    appBrokenLine.title = '折线图';
+    var colors = ['#5793f3', '#d14a61', '#675bba'];
+    function brokenLineTest(){
+        brokenLine = Array();
+        brokenLineName = Array();
+        //async: false,（默认是true）;false为同步，这个 testAsync()方法中的Ajax请求将整个浏览器锁死，只有tet.php执行结束后，才可以执行其它操作。
+        /*当async: true 时，ajax请求是异步的。但是其中有个问题：testAsync()中的ajax请求和其后面的操作是异步执行的，那么当tet.php还未执行完，就可能已经执行了 ajax请求后面的操作*/
+        $.ajax({
+            type:"post",
+            async:false,
+            url:"./controller/brokenLine.php",
+            data:{},
+            dataType:"json",
+            success:function(result){
+                if (result) {
+
+                    for (var i = 0; i < result.length; i++) {
+                        brokenLine.push(result[i]['value']);
+                        brokenLineName.push(result[i]['name']);
+                        //console.log(brokenLineName);
+                    }
+                }
+            },
+            catch:false
+        });
+        return brokenLine,brokenLineName;
+    }
+    brokenLineTest();
+    // console.log(brokenLineName);
+    //测试数据
+    // optionRing = null;
+    setInterval(function () {
+        brokenLineTest();
+        //第三步 使用刚指定的配置项和数据显示图表。
+        myBrokenLine.setOption({
+//             backgroundColor: '#2c343c',
+            color: colors,
+
+            tooltip: {
+                trigger: 'none',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            legend: {
+                data:['2017 月事件数量']
+            },
+            grid: {
+                top: 70,
+                bottom: 50
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisTick: {
+                        alignWithLabel: true
+                    },
+                    axisLine: {
+                        onZero: false,
+                        lineStyle: {
+                            color: colors[1]
+                        }
+                    },
+                    axisPointer: {
+                        label: {
+                            formatter: function (params) {
+                                return '告警数  ' + params.value
+                                    + (params.seriesData.length ? '：' + params.seriesData[0].data : '');
+                            }
+                        }
+                    },
+                    data: brokenLineName
+                },
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+
+                {
+                    name:'2017 月事件数量',
+                    type:'line',
+                    smooth: true,
+                    data: brokenLine
+                }
+            ]
+        });
+        window.addEventListener("resize",function(){
+            myBrokenLine.resize();
+        });
+    }, 1500);
+</script>
+</body>
+</html>

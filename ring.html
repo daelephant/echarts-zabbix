@@ -12,17 +12,13 @@
 <script type="text/javascript">
     //1、初始化echarts实例
     var dom = document.getElementById("container");
-    var myChart = echarts.init(dom,'dark');
+    var myRing = echarts.init(dom,'dark');
     //2、Prepara data
-    var app = {};
-    option = null;
-    app.title = '环形图';
-
-
     arrRing = Array();
-    arrRingout = Array();
     ringName = Array();
     function getring(){
+        arrRing = Array();
+        ringName = Array();
        $.ajax({
                 type:"post",
                 async:false,
@@ -42,49 +38,48 @@
                 catch:false
         }
     );
+       return  arrRing,ringName;
     }
     getring();
-    var app = {};
-     option = null;
-    // 指定图表的配置项和数据
-    // var option = {
-    //     series: [{
-    //         data: arrRing
-    //     }]
-    // };
+    var appRing = {};
+    var optionRing = {
+        series: [{
+            // roseType: 'angle',//南丁格尔图
+            data: arrRing
 
-    app.currentIndex = -1;
+        }]
+    }
+    // option = null;
+     appRing.currentIndex = -1;
     setInterval(function () {
 
-        var dataLen = option.series[0].data.length;
+        var dataLenRing = ringName.length;
+        // console.log(dataLenRing);
         // 取消之前高亮的图形
-        myChart.dispatchAction({
+        myRing.dispatchAction({
             type: 'downplay',
             seriesIndex: 0,
-            dataIndex: app.currentIndex
+            dataIndex: appRing.currentIndex
         });
-        app.currentIndex = (app.currentIndex + 1) % dataLen;
+        appRing.currentIndex = (appRing.currentIndex + 1) % dataLenRing;
         // 高亮当前图形
-        myChart.dispatchAction({
+        myRing.dispatchAction({
             type: 'highlight',
             seriesIndex: 0,
-            dataIndex: app.currentIndex
+            dataIndex: appRing.currentIndex
         });
         // 显示 tooltip
-        myChart.dispatchAction({
+        myRing.dispatchAction({
             type: 'showTip',
             seriesIndex: 0,
-            dataIndex: app.currentIndex
+            dataIndex: appRing.currentIndex
         });
-        arrRing = Array();
-        ringName = Array();
-
-    }, 5000);
+    }, 2100);
 
     setInterval(function () {
         getring();
         //console.log(arrRing);
-        myChart.setOption({
+        myRing.setOption({
             title : {
                 text: '饼图程序调用高亮示例',
                 x: 'center'
@@ -127,11 +122,14 @@
                 }
             ]
         });
+        window.addEventListener("resize",function(){
+            myFire.resize();
+        });
     },2000);
 
     if (option && typeof option === "object") {
 
-        myChart.setOption(option, true);
+        myRing.setOption(option, true);
     }
 </script>
 </body>
