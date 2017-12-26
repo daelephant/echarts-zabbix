@@ -8,7 +8,7 @@
 
 include_once('..\conf\connect.php');
 
-$res = mysql_query("select   
+$res = $pdo->query("select   
 sum(case month(time) when '1' then 1 else 0 end) as 一月份,  
 sum(case month(time) when '2' then 1 else 0 end) as 二月份,  
 sum(case month(time) when '3' then 1 else 0 end) as 三月份,  
@@ -24,7 +24,8 @@ sum(case month(time) when '12' then 1 else 0 end) as 十二月份
 from `event`  
 where year(time)='2017';");
 
-while($row = mysql_fetch_assoc($res)){
+$res->setFetchMode(PDO::FETCH_ASSOC);
+while($row = $res->fetch()){
 
     //var_dump($row);//结果是Array
     //$arrk = [];
