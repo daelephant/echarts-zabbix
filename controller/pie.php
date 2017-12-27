@@ -1,8 +1,9 @@
 <?php
 include_once('..\conf\connect.php');
 
-$res = mysql_query("SELECT `eventype`,count(`eventype`) as count FROM `event` group by `eventype`");
-while($row = mysql_fetch_array($res)){
+$res = $pdo->query("SELECT `eventype`,count(`eventype`) as count FROM `event` group by `eventype`");
+$res->setFetchMode(PDO::FETCH_ASSOC);
+while($row = $res->fetch()){
 	
 		$arr[] = array(
 			"name" =>  $row['eventype'],
@@ -14,20 +15,15 @@ $pie = $arr;
 
 
 //柱形图
-$line = mysql_query("SELECT `title`,`pv` FROM `chart_pie`");
+$line = $pdo->query("SELECT `title`,`pv` FROM `chart_pie`");
 	    $arr1=array();
 	    $arr2=array();
 	    $arr3=array();
-while($row = mysql_fetch_array($line)){
-
-	    // $arr1.push($row['eventype']);
-	    // $arr2.push($row['pv']);
+$line->setFetchMode(PDO::FETCH_ASSOC);
+while($row = $line->fetch()){
+        //var_dump($row);exit;
 	    array_push($arr1, $row['title']);
 	    array_push($arr2, $row['pv']);
-		// $arr[] = array(
-		// 	"name" =>  $row['eventype'],
-		// 	"value" => intval($row['count'])
-		// ); 
 	
 }
 //合并数组

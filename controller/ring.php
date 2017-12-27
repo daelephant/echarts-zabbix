@@ -1,8 +1,9 @@
 <?php
 include_once('..\conf\connect.php');
 
-$res = mysql_query("SELECT `eventype`,count(`eventype`) as count FROM `event` group by `eventype`");
-while($row = mysql_fetch_array($res)){
+$res = $pdo->query("SELECT `eventype`,count(`eventype`) as count FROM `event` group by `eventype`");
+$res->setFetchMode(PDO::FETCH_ASSOC);
+while($row = $res->fetch()){
 	
 		$arr[] = array(
 			"name" =>  $row['eventype'],

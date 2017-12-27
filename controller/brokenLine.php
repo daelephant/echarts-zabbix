@@ -5,9 +5,7 @@
  * Date: 2017-12-25
  * Time: 18:01
  */
-
 include_once('..\conf\connect.php');
-
 $res = $pdo->query("select   
 sum(case month(time) when '1' then 1 else 0 end) as 一月份,  
 sum(case month(time) when '2' then 1 else 0 end) as 二月份,  
@@ -23,18 +21,9 @@ sum(case month(time) when '11' then 1 else 0 end) as 十一月份,
 sum(case month(time) when '12' then 1 else 0 end) as 十二月份
 from `event`  
 where year(time)='2017';");
-
 $res->setFetchMode(PDO::FETCH_ASSOC);
 while($row = $res->fetch()){
-
-    //var_dump($row);//结果是Array
-    //$arrk = [];
-    //$arrv = [];
-
     foreach ($row as $k => $v){
-
-        //array_push($arrk,$k);
-        //array_push($arrv,$v);
         $arr[] = array(
             "name" =>  $k,
             "value" => intval($v)
@@ -42,10 +31,6 @@ while($row = $res->fetch()){
     }
 
 }
-//var_dump($arr);
-//var_dump($arrk);
 $ring = json_encode($arr);
-//$ring2 = json_encode($arrv);
 echo $ring;
-//echo $ring2;
 ?>
