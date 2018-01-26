@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello Qunee for HTML5</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
+    <style>
+        html, body {
+            width:100%;
+            height: 100%;
+            margin:0;
+            padding:0;
+            /*background: #333333;*/
+            background: black;
+        }
+    </style>
+</head>
+<body style="margin: 0px">
+<div style="position: absolute; width: 100%; top: 0px; bottom: 0px;" id="canvas"></div>
+<!--<script src="http://demo.qunee.com/lib/qunee-min.js"></script>-->
+<script src="./lib/qunee-min.js"></script>
+<script src="js\jquery.js"></script>
+
+<script>
+    var graph = new Q.Graph('canvas');
+    var hello = graph.createNode("监控平台", -100, -50);
+    // hello.setStyle(Q.Styles.BORDER, 1);边框宽度
+    // hello.setStyle(Q.Styles.BORDER_COLOR, '#AABBEE');边框颜色
+    // hello.setStyle(Q.Styles.PADDING, 5);
+    // hello.setStyle(Q.BACKGROUND_COLOR,"red");//不支持
+
+    hello.image = Q.Graphs.server;
+    var qunee = graph.createNode("主机1", 100, 50);
+    // qunee.host = hello;//设置节点qunee跟随hello
+    var edge = graph.createEdge("", hello, qunee);
+
+    var qunee2 = graph.createNode("主机2",-300,50);
+    // qunee2.host = hello;//设置节点qunee跟随hello
+    var edge2 = graph.createEdge("",hello,qunee2);
+
+    var label2 = new Q.LabelUI();
+    label2.position = Q.Position.CENTER_TOP;
+    label2.anchorPosition = Q.Position.CENTER_BOTTOM;
+    label2.border = 1;
+    label2.padding = new Q.Insets(2, 5);
+    label2.showPointer = true;
+    label2.offsetY = -10;
+    // label2.backgroundColor = Colors.blue;
+    //label2.backgroundColor = "red";//设置背景颜色
+    label2.fontSize = 16;
+    label2.fontStyle = "italic 100";
+    hello.addUI(label2, [{
+        property : "label2",
+        propertyType : Q.Consts.PROPERTY_TYPE_CLIENT,
+        bindingProperty : "data"
+    }, {
+        property : "label2.color",
+        propertyType : Q.Consts.PROPERTY_TYPE_CLIENT,
+        bindingProperty : "color"
+    }]);
+    // label2.set("label2.backgroundColo",Colors.yellow);
+    // hello.set("label2.color","blue");//文字颜色的变更
+    //hello.set("label2","告警离线！！！");
+    hello.set("label2.background-Color",'yellow');
+    function changeColor() {
+        $.ajax({
+            url:'./controller/getStatus.php',
+            data:{},
+            datatype:'json',
+            type:'get',
+            success:function (msgStatus) {
+
+                if(msgStatus == 0){
+                    //console.log(msgStatus);
+                    //alert(msgStatus);
+                    label2.backgroundColor = "red";//设置背景颜色
+                    hello.set("label2","平台\n告警离线!");
+                }else {
+                    label2.backgroundColor = "yellow";//设置背景颜色
+                   hello.set("label2.color","blue");//文字颜色的变更
+                   hello.set("label2","平台\n设备正常");
+                }
+            }
+        });
+    }
+    setInterval(function () {
+        changeColor();
+    },1000);
+
+</script>
+</body>
+</html>
