@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello Qunee for HTML5</title>
+    <title>DEMO HTML5</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
@@ -12,8 +12,12 @@
             height: 100%;
             margin:0;
             padding:0;
-            /*background: #333333;*/
-            background: black;
+            background: #333333;
+            /*background: black;*/
+            /*关于去除授权*/
+            /*qunee-min.js找
+            i=fw+wq+cw
+            i=''即*/
         }
     </style>
 </head>
@@ -26,19 +30,63 @@
 <script>
     var graph = new Q.Graph('canvas');
     var hello = graph.createNode("监控平台", -100, -50);
+    hello.setStyle(Q.Styles.BACKGROUND_COLOR, "#2898E0");
+    hello.setStyle(Q.Styles.BACKGROUND_GRADIENT, Q.Gradient.LINEAR_GRADIENT_VERTICAL);
+    hello.setStyle(Q.Styles.PADDING, new Q.Insets(10, 20));
     // hello.setStyle(Q.Styles.BORDER, 1);边框宽度
     // hello.setStyle(Q.Styles.BORDER_COLOR, '#AABBEE');边框颜色
     // hello.setStyle(Q.Styles.PADDING, 5);
     // hello.setStyle(Q.BACKGROUND_COLOR,"red");//不支持
 
+    /*双击进入子网*/
+    /*双击进入子网*/
+
     hello.image = Q.Graphs.server;
     var qunee = graph.createNode("主机1", 100, 50);
+    qunee.image = Q.Graphs.exchanger2;
+    qunee.size = {width:50};
     // qunee.host = hello;//设置节点qunee跟随hello
     var edge = graph.createEdge("", hello, qunee);
+    edge.setStyle(Q.Styles.EDGE_COLOR, "#2898E0");//改变连接线的宽度和颜色
+    edge.setStyle(Q.Styles.EDGE_WIDTH, 3);
+
+    var group = graph.createGroup();//范围图
+    group.addChild(hello);
+    group.addChild(qunee);
+    group.groupType = Q.Consts.GROUP_TYPE_ELLIPSE;
+    group.setStyle(Q.Styles.GROUP_BACKGROUND_COLOR, Q.toColor(0xCCfcfb9b));
+    group.setStyle(Q.Styles.GROUP_BACKGROUND_GRADIENT, Q.Gradient.LINEAR_GRADIENT_HORIZONTAL);
 
     var qunee2 = graph.createNode("主机2",-300,50);
     // qunee2.host = hello;//设置节点qunee跟随hello
     var edge2 = graph.createEdge("",hello,qunee2);
+    edge2.setStyle(Q.Styles.EDGE_COLOR, "#2898E0");
+    edge2.setStyle(Q.Styles.EDGE_WIDTH, 3);
+
+    var qunee3 = graph.createNode("主机3",-300,150);
+    /*IMAGE相关样式*/
+    qunee3.setStyle(Q.Styles.IMAGE_BACKGROUND_COLOR, "#d5e056");
+    qunee3.setStyle(Q.Styles.IMAGE_PADDING, 5);
+    /*IMAGE相关样式*/
+    qunee3.image = Q.Graphs.subnetwork;
+    // qunee3.setStyle(Q.Styles.BACKGROUND_COLOR, "#c4dee0");//背景框和颜色
+    // qunee3.setStyle(Q.Styles.BACKGROUND_GRADIENT, Q.Gradient.LINEAR_GRADIENT_VERTICAL);
+    // qunee3.setStyle(Q.Styles.PADDING, new Q.Insets(10, 20));
+
+    /*背景颜色*/
+    qunee3.setStyle(Q.Styles.SELECTION_SHADOW_BLUR, 10);
+    qunee3.setStyle(Q.Styles.SELECTION_COLOR, '#8F8');
+    qunee3.setStyle(Q.Styles.SELECTION_SHADOW_OFFSET_X, 2);
+    qunee3.setStyle(Q.Styles.SELECTION_SHADOW_OFFSET_Y, 2);
+    /*背景颜色*/
+
+    var edge3 = graph.createEdge("",hello,qunee3);
+    edge3.setStyle(Q.Styles.EDGE_COLOR, "#2898E0");
+    edge3.setStyle(Q.Styles.EDGE_WIDTH, 3);
+
+    //qunee2的子节点：
+    // var test1 = graph.createNode("节点1",-300,100);
+    // var testEdge1 = graph.createNode("",hello,test1);
 
     var label2 = new Q.LabelUI();
     label2.position = Q.Position.CENTER_TOP;
